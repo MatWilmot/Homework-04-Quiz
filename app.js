@@ -26,5 +26,20 @@ plusOne.addEventListener("click", function (e) {
   score++;
   console.log(score);
 });
-// print title/intro to index.html
-// create a start button
+
+// add a timer
+var timerEl = document.querySelector(".timerEl");
+var secondsLeft = 30;
+
+function setSpeed() {
+  var timerInterval = setInterval(function () {
+    secondsLeft--;
+    timerEl.textContent = secondsLeft + " seconds left!";
+    console.log(secondsLeft);
+    if (secondsLeft === 0) {
+      clearInterval(timerInterval);
+      sendMessage();
+    }
+  }, 1000);
+}
+setSpeed();
