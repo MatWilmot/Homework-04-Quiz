@@ -96,7 +96,6 @@ $(document).ready(function () {
     );
     setSpeed();
   });
-  console.log(questions.length);
 
   // when you click an answer in the quiz..
   $(document).on("click", ".answerBtn", function () {
