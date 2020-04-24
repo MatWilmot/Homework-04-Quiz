@@ -56,6 +56,12 @@ $(document).ready(function () {
   var questionIndex;
   var secondsLeft = 60;
   var timerInterval;
+  try {
+    var highscoreArray = JSON.parse(window.localStorage.getItem("High Score"));
+  } catch {
+    var highscoreArray = [{}];
+  }
+  var leaderboardLength;
 
   // create a function to refresh the html on the screen each time the question is changed
   function refreshQuestions() {
@@ -88,7 +94,7 @@ $(document).ready(function () {
       // console.log(secondsLeft);
       if (secondsLeft < 1) {
         clearInterval(timerInterval);
-        sendMessage("Time's Up!");
+        sendMessage("You ran out of time!");
       }
     }, 1000);
   }
@@ -98,19 +104,78 @@ $(document).ready(function () {
     $("#headerRow").html(`<h1 class="text-center col-sm-12">${str}</h1>`);
     $("#body").attr("class", "col-sm-12 text-center");
     $("#body").html(
-      `<button class="btn btn-success text-light">View Score</button>`
+      `<h1>Your score is ${score}</h1>
+        <br />
+        <form>
+          <input
+            type="text"
+            name="userName"
+            id="userName"
+            placeholder="Enter name here"
+          />
+          <a id="btnSubmit" class="btn btn-primary text-light" href="#">Submit</a>
+        </form>
+        <br />
+        <form><button id="leaderboard" class="btn btn-success text-light">Contine without submitting</button>
+        <button type="submit" class="btn btn-danger text-light">Try Again</button></form>`
     );
   }
 
+  // this function will render the high scores page
+  function showHighscores() {
+    // make #headerRow.html only contain one element class col-sm-12 text-center
+    $("#headerRow").html(
+      `<div id="header" class="col-sm-10 text-center"></div>`
+    );
+    $("#body").attr("class", "col-sm-6 offset-3 text-left");
+    $("#body").html(`<h1>Leaderboard</h1>
+    <table id="scoreTable" class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col">Rank</th>
+          <th scope="col">Name</th>
+          <th scope="col">Score</th>
+        </tr>
+      </thead>
+      <tbody id="tbody"></tbody>
+    </table>
+    <a class="btn btn-success text-light" href="./index.html">
+      Home
+    </a>
+    <button id="clearScores" class="btn btn-danger text-light">Clear Scores</button>`);
+    clearInterval(timerInterval);
+
+    highscoreArray.sort(function (a, b) {
+      return b.score - a.score;
+    });
+
+    if (highscoreArray.length < 10) {
+      leaderboardLength = highscoreArray.length;
+    } else {
+      leaderboardLength = 10;
+    }
+
+    for (var i = 0; i < leaderboardLength; i++) {
+      var currentRank = i + 1;
+      $("#tbody").append(`<tr id="row-${i}"></tr>`);
+      $(`#row-${i}`).append(`<td>${currentRank}</td>`);
+      $(`#row-${i}`).append(`<td>${highscoreArray[i].name}</td>`);
+      $(`#row-${i}`).append(`<td>${highscoreArray[i].score}</td>`);
+    }
+  }
+
   // when you click the start button..
-  $("#startBtn").on("click", function (e) {
-    e.preventDefault();
+  $(document).on("click", "#startBtn", function () {
     questionIndex = 0;
     refreshQuestions();
     $("#headerRow").append(
       `<div class="col-sm-2"><p id="timerEl">60 seconds left</p></div>`
     );
     setSpeed();
+  });
+
+  $(document).on("click", "#leaderboard", function () {
+    showHighscores();
   });
 
   // when you click an answer in the quiz..
@@ -132,5 +197,24 @@ $(document).ready(function () {
       sendMessage("Done!");
       clearInterval(timerInterval);
     }
+  });
+
+  // When you click the submit button
+  $(document).on("click", "#btnSubmit", function () {
+    // create an object in localStorage with name: and score:
+    name = $("#userName").val();
+    console.log(name);
+    if (highscoreArray === null) {
+      highscoreArray = [];
+    }
+    highscoreArray.push({ name, score });
+    window.localStorage.setItem("High Score", JSON.stringify(highscoreArray));
+    showHighscores();
+  });
+
+  // when you click the clear scores button
+  $(document).on("click", "#clearScores", function () {
+    window.localStorage.clear();
+    showHighscores();
   });
 });
