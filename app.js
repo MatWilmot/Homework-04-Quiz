@@ -29,12 +29,28 @@ $(document).ready(function () {
       "Carlos Olivera",
       "Rico Rodriguez",
     ],
+    [
+      "Q5: What was Mario's original name?",
+      "Wario",
+      "Luigi",
+      "Jumpman",
+      "Hammer Bro",
+    ],
+    [
+      "Q6: Sonic is a hedgehog, and Tails is a two-tailed fox. What animal is Knuckles?",
+      "Squirrel",
+      "Echidna",
+      "Hedgehog",
+      "Rabbit",
+    ],
   ];
   var correctAnswers = [
     "Master Sword",
     "Sixteen",
     "First Officer Reynolds",
     "Rico Rodriguez",
+    "Jumpman",
+    "Echidna",
   ];
   var score = 0;
   var questionIndex;
@@ -70,7 +86,7 @@ $(document).ready(function () {
       secondsLeft--;
       timerEl.textContent = secondsLeft + " seconds left!";
       // console.log(secondsLeft);
-      if (secondsLeft === 0) {
+      if (secondsLeft < 1) {
         clearInterval(timerInterval);
         sendMessage("Time's Up!");
       }
