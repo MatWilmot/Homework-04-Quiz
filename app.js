@@ -1,18 +1,32 @@
 $(document).ready(function () {
   // create an array of objects for questions and answers
   var questions = [
-    ["What color is the sky?", "red", "blue", "green", "yellow"],
-    ["Question 2", "Q2 A1", "Q2 A2", "Q2 A3", "Q2 A4"],
+    [
+      "Q1: What is the name of Link's sword in the Legend of Zelda series?",
+      "Keyblade",
+      "Buster Sword",
+      "Masamune",
+      "Master Sword",
+    ],
+    [
+      "Q2: How many games, across all platforms, are there in the Grand Theft Auto series?",
+      "Five",
+      "Eight",
+      "Sixteen",
+      "Twenty One",
+    ],
   ];
-
-  // create an empty variable for the current score, and prove I can increase it
+  var correctAnswers = ["Master Sword", "Sixteen"];
   var score = 0;
-  var questionIndex = 0;
+  var questionIndex;
+  var secondsLeft = 60;
+  var timerInterval;
 
   // create a function to refresh the html on the screen each time the question is changed
   function refreshList() {
-    // clear out the main area
-    $("#questions").html("");
+    // clear out the header area
+    $("#header").html("");
+    $("#body").html("");
     // prepend each item in the object to the screen
     for (var i = 0; i < Object.keys(questions[questionIndex]).length; i++) {
       if (i === 0) {
@@ -21,38 +35,55 @@ $(document).ready(function () {
             ${questions[questionIndex][i]}
           </h1>`);
       } else {
-        $("#questions").append(`<div class="card mb-3">
-        <div class="card-body">
-          <button data-id=${i} class="card-text answerBtn" style="width: 100px;">
-            ${questions[questionIndex][i]}
-          </button>
-        </div>
-      </div>`);
+        $("#body").attr("class", "col-sm-10 text-center");
+        $("#body").append(`
+          <h4 class="answerBtn">${questions[questionIndex][i]}</h4><br>
+        `);
       }
     }
   }
-  refreshList();
-});
+  // add a timer (totally stole this from another of my projects)
 
-// add a timer
-var timerEl = document.querySelector("#timerEl");
-var secondsLeft = 30;
+  // call this function after clicking the start button
+  function setSpeed() {
+    var timerEl = document.querySelector("#timerEl");
+    timerInterval = setInterval(function () {
+      secondsLeft--;
+      timerEl.textContent = secondsLeft + " seconds left!";
+      // console.log(secondsLeft);
+      if (secondsLeft === 0) {
+        clearInterval(timerInterval);
+        sendMessage();
+      }
+    }, 1000);
+  }
 
-function setSpeed() {
-  var timerInterval = setInterval(function () {
-    secondsLeft--;
-    timerEl.textContent = secondsLeft + " seconds left!";
-    // console.log(secondsLeft);
-    if (secondsLeft === 0) {
-      clearInterval(timerInterval);
-      sendMessage();
+  function sendMessage() {
+    // clear everything from the screen and display notification
+    $("#headerRow").html(`<h1 class="text-center col-sm-12">Time's Up!</h1>`);
+    $("#body").attr("class", "col-sm-12 text-center");
+    $("#body").html(
+      `<button class="btn btn-success text-light">View Score</button>`
+    );
+  }
+
+  // when you click the start button..
+  $("#startBtn").on("click", function (e) {
+    e.preventDefault();
+    questionIndex = 0;
+    refreshList();
+    $("#headerRow").append(
+      `<div class="col-sm-2"><p id="timerEl">60 seconds left!</p></div>`
+    );
+    setSpeed();
+  });
+
+  // when you click an answer in the quiz..
+  $(document).on("click", ".answerBtn", function () {
+    if ($(this).text() === correctAnswers[questionIndex]) {
+      console.log("correct!");
+    } else {
+      console.log("incorrect");
     }
-  }, 1000);
-}
-setSpeed();
-
-function sendMessage() {
-  // clear everything from the screen and display notification
-  $("#header").html("<h1>Time's Up!</h1>");
-  $("#questions").html("<button>View Score</button>");
-}
+  });
+});
