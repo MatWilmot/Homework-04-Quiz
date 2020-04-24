@@ -15,15 +15,34 @@ $(document).ready(function () {
       "Sixteen",
       "Twenty One",
     ],
+    [
+      "Q3: Which of the following characters does NOT exist in the Mass Effect universe",
+      "First Officer Reynolds",
+      "Commander Shepard",
+      "Tali'Zorah nar Rayya",
+      "Miranda Lawson",
+    ],
+    [
+      "Q4: What is the name of the main protagonist in the Just Cause series?",
+      "Eric Lecarde",
+      "Miguel Caballero Rojo",
+      "Carlos Olivera",
+      "Rico Rodriguez",
+    ],
   ];
-  var correctAnswers = ["Master Sword", "Sixteen"];
+  var correctAnswers = [
+    "Master Sword",
+    "Sixteen",
+    "First Officer Reynolds",
+    "Rico Rodriguez",
+  ];
   var score = 0;
   var questionIndex;
   var secondsLeft = 60;
   var timerInterval;
 
   // create a function to refresh the html on the screen each time the question is changed
-  function refreshList() {
+  function refreshQuestions() {
     // clear out the header area
     $("#header").html("");
     $("#body").html("");
@@ -53,14 +72,14 @@ $(document).ready(function () {
       // console.log(secondsLeft);
       if (secondsLeft === 0) {
         clearInterval(timerInterval);
-        sendMessage();
+        sendMessage("Time's Up!");
       }
     }, 1000);
   }
 
-  function sendMessage() {
+  function sendMessage(str) {
     // clear everything from the screen and display notification
-    $("#headerRow").html(`<h1 class="text-center col-sm-12">Time's Up!</h1>`);
+    $("#headerRow").html(`<h1 class="text-center col-sm-12">${str}</h1>`);
     $("#body").attr("class", "col-sm-12 text-center");
     $("#body").html(
       `<button class="btn btn-success text-light">View Score</button>`
@@ -71,19 +90,32 @@ $(document).ready(function () {
   $("#startBtn").on("click", function (e) {
     e.preventDefault();
     questionIndex = 0;
-    refreshList();
+    refreshQuestions();
     $("#headerRow").append(
-      `<div class="col-sm-2"><p id="timerEl">60 seconds left!</p></div>`
+      `<div class="col-sm-2"><p id="timerEl">60 seconds left</p></div>`
     );
     setSpeed();
   });
+  console.log(questions.length);
 
   // when you click an answer in the quiz..
   $(document).on("click", ".answerBtn", function () {
     if ($(this).text() === correctAnswers[questionIndex]) {
-      console.log("correct!");
+      score++;
+      console.log(score);
     } else {
       console.log("incorrect");
+      secondsLeft -= 10;
+    }
+    // if the question index is less than the length of the question array
+    if (questionIndex < questions.length - 1) {
+      // add one to question index and refresh the page
+      questionIndex++;
+      refreshQuestions();
+      // otherwise display "finished" screen
+    } else {
+      sendMessage("Done!");
+      clearInterval(timerInterval);
     }
   });
 });
