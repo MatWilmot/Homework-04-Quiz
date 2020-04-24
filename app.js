@@ -111,9 +111,10 @@ $(document).ready(function () {
             type="text"
             name="userName"
             id="userName"
+            autofocus
             placeholder="Enter name here"
           />
-          <a id="btnSubmit" class="btn btn-primary text-light" href="#">Submit</a>
+          <button id="btnSubmit" class="btn btn-primary text-light">Submit</button>
         </form>
         <br />
         <form><button id="leaderboard" class="btn btn-success text-light">Contine without submitting</button>
@@ -144,7 +145,6 @@ $(document).ready(function () {
     </a>
     <button id="clearScores" class="btn btn-danger text-light">Clear Scores</button>`);
     clearInterval(timerInterval);
-
     highscoreArray.sort(function (a, b) {
       return b.score - a.score;
     });
@@ -164,6 +164,18 @@ $(document).ready(function () {
     }
   }
 
+  function showAlert(str, type) {
+    $("#alert").show();
+
+    // instead of conditional, use this:
+    $("#alert").attr("class", `alert alert-${type}`);
+    $("#alert").text(str);
+    // set timeout: in this amount of time, do this
+    window.setTimeout(function () {
+      $("#alert").hide();
+    }, 1000);
+  }
+
   // when you click the start button..
   $(document).on("click", "#startBtn", function () {
     questionIndex = 0;
@@ -171,6 +183,7 @@ $(document).ready(function () {
     $("#headerRow").append(
       `<div class="col-sm-2"><p id="timerEl">60 seconds left</p></div>`
     );
+    $("#bodyBottom").html(`<div id="alert" class="col-sm-12">`);
     setSpeed();
   });
 
@@ -181,10 +194,10 @@ $(document).ready(function () {
   // when you click an answer in the quiz..
   $(document).on("click", ".answerBtn", function () {
     if ($(this).text() === correctAnswers[questionIndex]) {
-      score++;
-      console.log(score);
+      score += 2;
+      showAlert("Correct", "success");
     } else {
-      console.log("incorrect");
+      showAlert("Wrong! -10 seconds", "danger");
       secondsLeft -= 10;
     }
     // if the question index is less than the length of the question array
@@ -200,7 +213,8 @@ $(document).ready(function () {
   });
 
   // When you click the submit button
-  $(document).on("click", "#btnSubmit", function () {
+  $(document).on("click", "#btnSubmit", function (e) {
+    e.preventDefault();
     // create an object in localStorage with name: and score:
     name = $("#userName").val();
     console.log(name);
@@ -215,6 +229,6 @@ $(document).ready(function () {
   // when you click the clear scores button
   $(document).on("click", "#clearScores", function () {
     window.localStorage.clear();
-    showHighscores();
+    $("#tbody").html("");
   });
 });
