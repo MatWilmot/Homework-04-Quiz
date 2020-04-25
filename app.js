@@ -91,7 +91,6 @@ $(document).ready(function () {
     timerInterval = setInterval(function () {
       secondsLeft--;
       timerEl.textContent = secondsLeft + " seconds left!";
-      // console.log(secondsLeft);
       if (secondsLeft < 1) {
         clearInterval(timerInterval);
         sendMessage("You ran out of time!");
@@ -183,7 +182,7 @@ $(document).ready(function () {
     $("#headerRow").append(
       `<div class="col-sm-2"><p id="timerEl">60 seconds left</p></div>`
     );
-    $("#bodyBottom").html(`<div id="alert" class="col-sm-12">`);
+    $("#bodyBottom").append(`<div id="alert" class="col-sm-12">`);
     setSpeed();
   });
 
@@ -215,9 +214,8 @@ $(document).ready(function () {
   // When you click the submit button
   $(document).on("click", "#btnSubmit", function (e) {
     e.preventDefault();
-    // create an object in localStorage with name: and score:
     name = $("#userName").val();
-    console.log(name);
+    // create an object in localStorage with name: and score:
     if (highscoreArray === null) {
       highscoreArray = [];
     }
