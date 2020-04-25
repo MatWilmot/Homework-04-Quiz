@@ -111,8 +111,7 @@ $(document).ready(function () {
             name="userName"
             id="userName"
             autofocus
-            placeholder="Enter name here"
-          />
+            placeholder="Enter name here"/>
           <button id="btnSubmit" class="btn btn-primary text-light">Submit</button>
         </form>
         <br />
@@ -215,13 +214,17 @@ $(document).ready(function () {
   $(document).on("click", "#btnSubmit", function (e) {
     e.preventDefault();
     name = $("#userName").val();
-    // create an object in localStorage with name: and score:
-    if (highscoreArray === null) {
-      highscoreArray = [];
+    if (name === "") {
+      showAlert("Error, please type your name", "danger");
+    } else {
+      // create an object in localStorage with name: and score:
+      if (highscoreArray === null) {
+        highscoreArray = [];
+      }
+      highscoreArray.push({ name, score });
+      window.localStorage.setItem("High Score", JSON.stringify(highscoreArray));
+      showHighscores();
     }
-    highscoreArray.push({ name, score });
-    window.localStorage.setItem("High Score", JSON.stringify(highscoreArray));
-    showHighscores();
   });
 
   // when you click the clear scores button
